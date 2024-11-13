@@ -14,7 +14,7 @@ const prisma = new PrismaClient({
 
 // signup (../users/signup) - POST
 router.post('/signup', async (req,res) => {
-  // get uesr inputs
+  // get user inputs
   const { email, password, first_name, last_name } = req.body;
 
   // input validation to make sure fields are not null

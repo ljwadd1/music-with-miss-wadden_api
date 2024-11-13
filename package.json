@@ -1,7 +1,7 @@
 {
-  "name": "waddens-works_api",
+  "name": "music-with-miss-wadden_api",
   "version": "1.0.0",
-  "description": "An API for a custom online store, \"Wadden's Works\"",
+  "description": "An API for a custom online store, \"Music With Miss Wadden.\"",
   "main": "app.js",
   "type": "module",
   "scripts": {
