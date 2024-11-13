@@ -49,7 +49,43 @@ router.post('/signup', async (req,res) => {
   res.json({ 'user' : email });
 });
 
-// login (../users/login)
+
+// login (../users/login) - POST
+router.post('/login', async (req,res) => {
+  // get user inputs
+  const { email, password } = req.body;
+
+  // validate inputs - no nulls allowed
+  if(!email || !password) {
+    return res.status(400).send('Missing required fields');
+  }
+
+  // find user in database or return error message if non-existent
+  const existingUser = await prisma.customer.findUnique({
+    where: {
+      email: email,
+    }
+  });
+  if (!existingUser) {
+    return res.status(404).send('User not found');
+  }
+
+  // compare/verify the password entered, match against the hashed password
+  const passwordMatch = await comparePassword(password, existingUser.password);
+  if (!passwordMatch) {
+    return res.status(401).send('Invalid password');  // 401: unauthorized
+  }
+
+  // if valid, setup user session data
+  req.session.email = existingUser.email;
+  req.session.customer_id = existingUser.id;
+  req.session.name = existingUser.first_name + ' ' + existingUser.last_name;
+  console.log('Logged in user: ' + req.session.email);
+
+  // send response
+  res.send('Login successful');
+});
+
 
 // logout (../users/logout)
 
