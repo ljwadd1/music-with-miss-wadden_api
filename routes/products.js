@@ -12,6 +12,11 @@ const prisma = new PrismaClient({
 // TODO: Routing for...
 
 // get all products (../products/all)
+router.get('/all', async (req, res) => {
+  const products = await prisma.product.findMany();
+
+  res.json(products);
+})
 
 // get product by id (../products/:id)
 
