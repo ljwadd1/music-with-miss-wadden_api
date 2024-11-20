@@ -11,15 +11,40 @@ const prisma = new PrismaClient({
 
 // TODO: Routing for...
 
-// get all products (../products/all)
+// get all products
 router.get('/all', async (req, res) => {
   const products = await prisma.product.findMany();
 
   res.json(products);
 })
 
-// get product by id (../products/:id)
+// get product by id
+router.get('/:product_id', async (req, res) => {
+  // capture product id from request
+  const prod_id = req.params.product_id;
 
+  // validate id is an int - send bad response msg if not
+  if(isNaN(prod_id)) {
+    res.status(400).send('\n Bad request: Product id must be an integer.');
+    return;
+  }
+
+  // if id is valid, find product by id
+  const product = await prisma.product.findUnique({
+    where: {
+      product_id: parseInt(prod_id)
+    }
+  });
+
+  // if id exists, return the record; if not, return 404
+  if (product) {
+    res.json(product);
+  } else {
+    res.status(404).send('\n Error: No product with id of ' + prod_id + ' found.');
+    return;
+  }
+
+})
 // purchase
 
 
