@@ -57,7 +57,7 @@ router.post('/login', async (req,res) => {
 
   // validate inputs - no nulls allowed
   if(!email || !password) {
-    return res.status(400).send('Missing required fields');
+    return res.status(400).send('Missing required fields.');
   }
 
   // find user in database or return error message if non-existent
@@ -67,23 +67,26 @@ router.post('/login', async (req,res) => {
     }
   });
   if (!existingUser) {
-    return res.status(404).send('User not found');
+    return res.status(404).send('User not found.');
   }
 
   // compare/verify the password entered, match against the hashed password
   const passwordMatch = await comparePassword(password, existingUser.password);
   if (!passwordMatch) {
-    return res.status(401).send('Invalid password');  // 401: unauthorized
+    return res.status(401).send('Invalid password.');  // 401: unauthorized
   }
 
   // if valid, setup user session data
+  req.session.customer_id = existingUser.customer_id;
   req.session.email = existingUser.email;
-  req.session.customer_id = existingUser.id;
-  req.session.name = existingUser.first_name + ' ' + existingUser.last_name;
-  console.log('Logged in user: ' + req.session.email);
+  req.session.first_name = existingUser.first_name;
+  req.session.last_name = existingUser.last_name;
+  req.session.full_name = existingUser.first_name + ' ' + existingUser.last_name; // not required, but for my own use
+
+  console.log('Logged in user: ' + req.session.full_name + '.');
 
   // send response
-  res.send('Login successful');
+  res.send('Login successful. Hello, ' + req.session.full_name + '!' );
 });
 
 

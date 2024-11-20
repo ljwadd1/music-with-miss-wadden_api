@@ -14,8 +14,7 @@ app.use(express.static('public'));
 
 // cors middleware
 app.use(cors({
-  origin: 'http://localhost:5173',  // react client
-  credentials: true                 // allow cookies
+  credentials: true                   // allow cookies
 }));
 
 // express-session middleware
@@ -36,5 +35,5 @@ app.use('/api/users', usersRouter);
 app.use('/api/products', productsRouter);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`App listening on port ${port}`);
 });
