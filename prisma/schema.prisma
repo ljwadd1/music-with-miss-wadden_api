@@ -27,3 +27,28 @@ model Customer {
   first_name      String
   last_name       String
 }
+
+model Purchase {
+  purchase_id     Int       @id @default(autoincrement())
+  customer_id     Int       @unique
+  street          String
+  city            String
+  province        String
+  country         String
+  postal_code     String
+  credit_card     String
+  credit_expire   Int       // Maybe change this later
+  credit_cvv      Int
+  invoice_amt     Float
+  invoice_tax     Float
+  invoice_total   Float
+  order_date      DateTime  @default(now())
+}
+
+model PurchaseItem {  // pk is composite key of purchase/product ids
+  purchase_id     Int       
+  product_id      Int 
+  quantity        Int
+
+  @@id([purchase_id, product_id])
+}

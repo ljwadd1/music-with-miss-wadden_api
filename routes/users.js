@@ -91,8 +91,37 @@ router.post('/login', async (req,res) => {
 
 
 // logout (../users/logout)
+router.post('/logout', (req, res) => {
+  // check if a user is logged in - if not, return 401 'not logged in'
+  if(req.session.email) {
+    // destroy session cookie
+    req.session.destroy();
+    // send successful logout response
+    res.send('Logout successful.');
+  } else {
+    //req.session.destroy();
+    return res.status(401).send('Bad request: Not logged in.');
+    
+  }
+})
+
 
 // get user session (../users/getSession)
+router.get('/getSession', (req, res) => {
+  // if user is logged in, return user's session data as json (not including full name)
+  if(req.session.email) {
+    res.json({
+      'customer_id': req.session.customer_id,
+      'email': req.session.email,
+      'first_name': req.session.first_name,
+      'last_name': req.session.last_name
+    });
+  } else {
+    // if user is not logged in, return 401 'not logged in'
+    return res.status(401).send('Bad request: Not logged in.');
+  }
+})
+
 
 
 export default router;
