@@ -30,15 +30,15 @@ model Customer {
 
 model Purchase {
   purchase_id     Int       @id @default(autoincrement())
-  customer_id     Int       @unique
+  customer_id     Int       
   street          String
   city            String
   province        String
   country         String
   postal_code     String
   credit_card     String
-  credit_expire   Int       // Maybe change this later
-  credit_cvv      Int
+  credit_expire   String       // Maybe change this later
+  credit_cvv      String
   invoice_amt     Float
   invoice_tax     Float
   invoice_total   Float

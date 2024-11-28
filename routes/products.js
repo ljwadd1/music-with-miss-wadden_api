@@ -50,12 +50,11 @@ router.get('/:product_id', async (req, res) => {
 // purchase
 router.post('/purchase', async (req, res) => {
   // Ensure user is logged in
-  if (req.session.email) {
-    //res.send('User is logged in');  // test
-    const { street, city, province, country, postal_code, credit_card, credit_expire, credit_cvv, cart, invoice_amt, invoice_tax, invoice_total } = req.body; // should cart be separate?
-  } else {
+  if (!req.session.email) {
     return res.status(401).send('You must be logged in to make a purchase.');
   }
+
+  const { street, city, province, country, postal_code, credit_card, credit_expire, credit_cvv, cart, invoice_amt, invoice_tax, invoice_total } = req.body;
 
   // Check if cart is empty ??
   if (!cart) {
@@ -70,7 +69,7 @@ router.post('/purchase', async (req, res) => {
   // If input is valid, create a new purchase
   const purchase = await prisma.purchase.create({
     data: {
-      customer_id: req.session.customer_id,   // ?
+      customer_id: req.session.customer_id,
       street: street,
       city: city,
       province: province,
@@ -79,15 +78,29 @@ router.post('/purchase', async (req, res) => {
       credit_card: credit_card,
       credit_expire: credit_expire,
       credit_cvv: credit_cvv,
-      invoice_amt: invoice_amt,
-      invoice_tax: invoice_tax,
-      invoice_total: invoice_total
+      invoice_amt: parseFloat(invoice_amt),
+      invoice_tax: parseFloat(invoice_tax),
+      invoice_total: parseFloat(invoice_total)
     }
   });
 
+  // parse array
+  const parsedCart = cart.split(',');
+
+  // parse unique array
+  let set = new Set(parsedCart);
+  let uniqueArray = [...set];
+  uniqueArray.map(async (product_id) => {
+      const purchaseItem = await prisma.purchaseItem.create({
+        data: {
+          purchase_id: purchase.purchase_id,
+          product_id: parseInt(product_id),
+          quantity: parsedCart.filter((x) => x === product_id).length
+        }
+      })
+  });
+
   res.json(purchase);
-
-
 })
 
 

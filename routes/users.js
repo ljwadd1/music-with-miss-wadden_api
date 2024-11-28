@@ -1,6 +1,6 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
-import { hashPassword, comparePassword } from '../lib/utility.js'
+import { hashPassword, comparePassword, validatePassword } from '../lib/utility.js'
 
 const router = express.Router();
 
@@ -30,6 +30,14 @@ router.post('/signup', async (req,res) => {
   });
   if(existingUser) {
     return res.status(400).send('User already exists.');
+  }
+
+  // validate user-generated pw against rules
+  const validatedPassword = await validatePassword(password);
+  if (!validatedPassword) {
+    //JSON.parse(validatedPassword);
+    //console.log(validatedPassword);
+    return res.status(401).send('invalid password');  // 401: unauthorized
   }
 
   // encrypt password using bcrypt (no plaintext passwords allowed!!)
